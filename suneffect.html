@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Weather Background Test</title>
+
+    <style>
+      body {
+        background: #0a0a0a;
+        height: 100vh;
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: center;
+        overflow: hidden;
+        color: white;
+        font-family: sans-serif;
+      }
+
+      #stoneBox {
+        width: 400px;
+        height: 400px;
+        background: rgba(0, 0, 50, 0.5);
+        border-radius: 20px;
+        position: relative;
+        overflow: hidden;
+        margin-top: 30px;
+      }
+
+      canvas {
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+      }
+
+      #controls {
+        margin-top: 20px;
+        display: flex;
+        gap: 10px;
+      }
+
+      button {
+        padding: 10px 20px;
+        border: none;
+        background: #0099cc;
+        color: white;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 1rem;
+      }
+    </style>
+  </head>
+  <body>
+    <h2>Weather Effects Test</h2>
+
+    <div id="controls">
+      <button onclick="startFog()">Fog</button>
+      <button onclick="startCloud()">Cloud</button>
+      <button onclick="startClear()">Clear Sky</button>
+      <button onclick="stopAll()">Stop</button>
+    </div>
+
+    <div id="stoneBox">
+      <canvas id="effectCanvas"></canvas>
+    </div>
+
+    <script>
+      /* 공통 설정 */
+      const stoneBox = document.getElementById("stoneBox");
+      const canvas = document.getElementById("effectCanvas");
+      const ctx = canvas.getContext("2d");
+      let animId;
+
+      function resizeCanvas() {
+        canvas.width = stoneBox.clientWidth;
+        canvas.height = stoneBox.clientHeight;
+      }
+      resizeCanvas();
+      window.addEventListener("resize", resizeCanvas);
+
+      /* 모든 효과 중지 */
+      function stopAll() {
+        cancelAnimationFrame(animId);
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+      }
+
+      /* ----------------------------------- */
+      /* 🌫 1. Fog Effect (안개) */
+      /* ----------------------------------- */
+      function startFog() {
+        stopAll();
+
+        let fogs = [];
+        for (let i = 0; i < 10; i++) {
+          fogs.push({
+            x: Math.random() * canvas.width,
+            y: Math.random() * canvas.height,
+            w: Math.random() * 300 + 150,
+            h: Math.random() * 200 + 120,
+            speed: 0.3 + Math.random() * 0.3,
+          });
+        }
+
+        function fog() {
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+          fogs.forEach((f) => {
+            ctx.fillStyle = "rgba(180,180,180,0.25)";
+            ctx.filter = "blur(40px)";
+            ctx.beginPath();
+            ctx.ellipse(f.x, f.y, f.w, f.h, 0, 0, Math.PI * 2);
+            ctx.fill();
+
+            f.x -= f.speed;
+            if (f.x + f.w < 0) f.x = canvas.width + f.w;
+          });
+
+          ctx.filter = "none";
+          animId = requestAnimationFrame(fog);
+        }
+
+        fog();
+      }
+
+      /* ----------------------------------- */
+      /* ☁ 2. Cloud Effect (구름) */
+      /* ----------------------------------- */
+      function startCloud() {
+        stopAll();
+
+        let clouds = [];
+        for (let i = 0; i < 6; i++) {
+          clouds.push({
+            x: Math.random() * canvas.width,
+            y: Math.random() * canvas.height * 0.7,
+            w: Math.random() * 250 + 150,
+            h: Math.random() * 100 + 60,
+            speed: 0.5 + Math.random() * 0.4,
+          });
+        }
+
+        function cloud() {
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+          clouds.forEach((c) => {
+            let gradient = ctx.createRadialGradient(
+              c.x,
+              c.y,
+              10,
+              c.x,
+              c.y,
+              c.w
+            );
+            gradient.addColorStop(0, "rgba(255,255,255,0.9)");
+            gradient.addColorStop(1, "rgba(255,255,255,0)");
+
+            ctx.fillStyle = gradient;
+            ctx.beginPath();
+            ctx.ellipse(c.x, c.y, c.w, c.h, 0, 0, Math.PI * 2);
+            ctx.fill();
+
+            c.x += c.speed;
+            if (c.x - c.w > canvas.width) c.x = -c.w;
+          });
+
+          animId = requestAnimationFrame(cloud);
+        }
+
+        cloud();
+      }
+
+      /* ----------------------------------- */
+      /* ☀ 3. Clear Sky Light Flare (맑은하늘) */
+      /* ----------------------------------- */
+      function startClear() {
+        stopAll();
+
+        let lights = [
+          {
+            x: -100,
+            y: -100,
+            size: 200,
+            dx: 1.2,
+            dy: 1.0,
+            color: "rgba(255,255,200,0.35)",
+          },
+          {
+            x: -50,
+            y: 50,
+            size: 140,
+            dx: 1.5,
+            dy: 1.3,
+            color: "rgba(255,180,150,0.25)",
+          },
+          {
+            x: 100,
+            y: 150,
+            size: 240,
+            dx: 0.8,
+            dy: 0.9,
+            color: "rgba(120,200,255,0.25)",
+          },
+        ];
+
+        function flare() {
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+          lights.forEach((l) => {
+            let g = ctx.createRadialGradient(l.x, l.y, 10, l.x, l.y, l.size);
+            g.addColorStop(0, l.color);
+            g.addColorStop(1, "rgba(0,0,0,0)");
+
+            ctx.fillStyle = g;
+            ctx.beginPath();
+            ctx.arc(l.x, l.y, l.size, 0, Math.PI * 2);
+            ctx.fill();
+
+            l.x += l.dx;
+            l.y += l.dy;
+
+            if (l.x > canvas.width + l.size) l.x = -l.size;
+            if (l.y > canvas.height + l.size) l.y = -l.size;
+          });
+
+          animId = requestAnimationFrame(flare);
+        }
+
+        flare();
+      }
+    </script>
+  </body>
+</html>

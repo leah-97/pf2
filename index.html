@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link rel="stylesheet" href="css/weather.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css"
+      integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
+  </head>
+  <body>
+    <section>
+      <div class="wrap">
+        <div class="sc">
+          <input
+            id="searchInput"
+            placeholder="
+Enter Cityname"
+          />
+          <button id="searchBtn">
+            <i class="fa-solid fa-arrow-turn-down"></i>
+          </button>
+        </div>
+
+        <!--날씨전체 box(wrap)-->
+        <div class="box">
+          <!--날씨oox 왼쪽-->
+          <div class="smallBox1">
+            <div class="weatherTop">
+              <span id="des"></span>
+              <span id="temp"></span>
+            </div>
+            <div class="line"></div>
+            <div class="weatherBot">
+              <span id="place"></span>
+
+              <span id="date"></span>
+
+              <span id="time"></span>
+            </div>
+            <canvas id="weatherChart"></canvas>
+          </div>
+          <!--날씨box 오른쪽-->
+          <div class="smallBox2">
+            <canvas id="stoneEffect"></canvas>
+            <div id="stoneFlash"></div>
+            <div id="stoneFog"></div>
+            <div class="stone">Weather stone</div>
+            <img src="img/sun.gif" alt="돌" />
+          </div>
+        </div>
+      </div>
+    </section>
+    <script src="js/weather.js"></script>
+  </body>
+</html>

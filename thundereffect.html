@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Rain & Thunder</title>
+  </head>
+  <body>
+    <canvas id="rain"></canvas>
+    <div id="flash"></div>
+    <!-- 번개 효과 레이어 -->
+
+    <style>
+      body {
+        margin: 0;
+        overflow: hidden;
+        background: #0a0a0a;
+      }
+      #rain {
+        position: fixed;
+        top: 0;
+        left: 0;
+      }
+
+      /* 번개 효과 */
+      #flash {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background: rgba(255, 255, 255, 1);
+        opacity: 0;
+        pointer-events: none;
+      }
+    </style>
+
+    <script>
+      //------------- 비 구현 -----------------
+      const canvas = document.getElementById("rain");
+      const ctx = canvas.getContext("2d");
+
+      function resize() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+      }
+      resize();
+      window.addEventListener("resize", resize);
+
+      const drops = [];
+      const dropCount = 200;
+
+      for (let i = 0; i < dropCount; i++) {
+        drops.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height,
+          length: Math.random() * 20 + 10,
+          speed: Math.random() * 5 + 5,
+          wind: Math.random() * 2 - 1,
+        });
+      }
+
+      function rain() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        ctx.strokeStyle = "rgba(180,180,255,0.7)";
+        ctx.lineWidth = 1;
+        ctx.lineCap = "round";
+
+        drops.forEach((d) => {
+          ctx.beginPath();
+          ctx.moveTo(d.x, d.y);
+          ctx.lineTo(d.x + d.wind, d.y + d.length);
+          ctx.stroke();
+
+          d.y += d.speed;
+          d.x += d.wind * 0.5;
+
+          if (d.y > canvas.height) {
+            d.y = -20;
+            d.x = Math.random() * canvas.width;
+          }
+        });
+
+        requestAnimationFrame(rain);
+      }
+      rain();
+
+      //------------- 번개 구현 -----------------
+      const flash = document.getElementById("flash");
+
+      function thunder() {
+        // 랜덤 딜레이 (2초 ~ 8초 사이)
+        const delay = Math.random() * 1500 + 2500;
+
+        setTimeout(() => {
+          // 번개 강도 (0.4 ~ 1.0)
+          const intensity = Math.random() * 0.6 + 0.4;
+
+          flash.style.opacity = intensity;
+
+          // 빠르게 사라지는 효과
+          setTimeout(() => {
+            flash.style.opacity = 0;
+          }, 100);
+
+          // 두 번 번쩍일 확률 (더 리얼하게)
+          if (Math.random() > 0.6) {
+            setTimeout(() => (flash.style.opacity = intensity * 0.7), 150);
+            setTimeout(() => (flash.style.opacity = 0), 250);
+          }
+
+          thunder(); // 계속 반복
+        }, delay);
+      }
+
+      thunder();
+    </script>
+  </body>
+</html>

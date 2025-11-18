@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Real Cloud Test</title>
+    <style>
+      body {
+        margin: 0;
+        background: #000;
+      }
+      canvas {
+        position: fixed;
+        inset: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="cloud"></canvas>
+
+    <script>
+      const canvas = document.getElementById("cloud");
+      const ctx = canvas.getContext("2d");
+
+      function resize() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+      }
+      resize();
+      window.addEventListener("resize", resize);
+
+      // Soft noise 생성
+      function generateCloudNoise(width, height) {
+        let buffer = ctx.createImageData(width, height);
+        for (let i = 0; i < buffer.data.length; i += 4) {
+          let v = Math.random() * 255;
+          buffer.data[i] = v;
+          buffer.data[i + 1] = v;
+          buffer.data[i + 2] = v;
+          buffer.data[i + 3] = 255;
+        }
+        return buffer;
+      }
+
+      let cloudNoise = generateCloudNoise(canvas.width, canvas.height);
+      let shiftX = 0;
+
+      function drawCloud() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        ctx.globalAlpha = 0.25;
+
+        // 움직이는 형태로 2배 크기 확장
+        ctx.drawImage(canvas, shiftX, 0);
+
+        ctx.putImageData(cloudNoise, -shiftX, 0);
+
+        shiftX += 0.2;
+        if (shiftX > canvas.width) shiftX = 0;
+
+        requestAnimationFrame(drawCloud);
+      }
+
+      drawCloud();
+    </script>
+  </body>
+</html>

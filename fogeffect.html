@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Real Fog Test</title>
+    <style>
+      body {
+        margin: 0;
+        background: #000;
+      }
+      canvas {
+        position: fixed;
+        inset: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="fog"></canvas>
+
+    <script>
+      const canvas = document.getElementById("fog");
+      const ctx = canvas.getContext("2d");
+
+      function resize() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+      }
+      resize();
+      window.addEventListener("resize", resize);
+
+      // Perlin Noise Base (Simplex 기반)
+      function generateNoise(width, height) {
+        let size = width * height;
+        let data = new Uint8ClampedArray(size);
+        let value = 0;
+        for (let i = 0; i < size; i++) {
+          value = Math.floor(Math.random() * 256);
+          data[i] = value;
+        }
+        return data;
+      }
+
+      let noise = generateNoise(canvas.width, canvas.height);
+      let time = 0;
+
+      function drawFog() {
+        let imageData = ctx.createImageData(canvas.width, canvas.height);
+        let data = imageData.data;
+
+        for (let x = 0; x < canvas.width; x++) {
+          for (let y = 0; y < canvas.height; y++) {
+            let index = x + y * canvas.width;
+            let noiseValue = noise[(index + time) % noise.length];
+
+            let alpha = (noiseValue / 255) * 0.4; // 안개 투명도
+
+            let pixel = index * 4;
+            data[pixel] = 255;
+            data[pixel + 1] = 255;
+            data[pixel + 2] = 255;
+            data[pixel + 3] = alpha * 255;
+          }
+        }
+
+        ctx.putImageData(imageData, 0, 0);
+        time += 1;
+
+        requestAnimationFrame(drawFog);
+      }
+
+      drawFog();
+    </script>
+  </body>
+</html>
