@@ -17,7 +17,7 @@ async function success(position) {
   long = position.coords.longitude;
   console.log(lat, long);
   let response = await fetch(
-    `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${long}&appid=${APIkey}&units=metric&lang=en`
+    `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${long}&appid=${APIkey}&units=metric&lang=en`,
   );
   let data = await response.json();
   loadForecastByCoord(lat, long);
@@ -26,7 +26,7 @@ async function success(position) {
 
 weather = async (cityname) => {
   let response = await fetch(
-    `https://api.openweathermap.org/data/2.5/weather?q=${cityname}&appid=${APIkey}&units=metric&lang=en`
+    `https://api.openweathermap.org/data/2.5/weather?q=${cityname}&appid=${APIkey}&units=metric&lang=en`,
   );
   let data = await response.json();
   console.log(data);
@@ -36,14 +36,14 @@ weather = async (cityname) => {
 /*날짜 */
 async function loadForecastByCoord(lat, lon) {
   let res = await fetch(
-    `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${APIkey}&units=metric&lang=en`
+    `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${APIkey}&units=metric&lang=en`,
   );
   let data = await res.json();
   renderForecastChart(data);
 }
 async function loadForecastByCity(city) {
   let res = await fetch(
-    `https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${APIkey}&units=metric&lang=en`
+    `https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${APIkey}&units=metric&lang=en`,
   );
   let data = await res.json();
   renderForecastChart(data);
@@ -57,7 +57,7 @@ function getFormattedDate() {
 }
 /*시간 */
 renderWeather = (data) => {
-  // const iconCode = "13d";
+  // const iconCode = "09d";
   const iconCode = data.weather[0].icon;
   BackgroundByIcon(iconCode);
   StoneByIcon(iconCode);
@@ -86,70 +86,72 @@ renderWeather = (data) => {
   place.textContent = data.name;
   des2.textContent = data.weather[0].description;
   place.textContent = data.name;
-  //   console.log("API 도시 이름:", data.name);
   time.textContent = setInterval(start, 1000);
   date.textContent = getFormattedDate();
 };
-/*배경 */
+/*배경 동영상 */
 function BackgroundByIcon(iconCode) {
-  const wrap = document.querySelector(".wrap");
-  let imgUrl = "";
+  const videoElement = document.querySelector("#bgVideo");
+  const videoSource = videoElement.querySelector("source");
+  let videoUrl = "";
 
   switch (iconCode) {
     case "01d":
     case "01n":
-      imgUrl = "img/sun.png";
+      videoUrl = "img/sun.mp4";
       break;
 
     case "02d":
     case "02n":
-      imgUrl = "img/cl.png";
+      videoUrl = "img/few.mp4";
       break;
 
     case "03d":
     case "03n":
-      imgUrl = "img/fog.png";
+      videoUrl = "img/cl.mp4";
       break;
 
     case "04d":
     case "04n":
-      imgUrl = "img/fog2.png";
+      videoUrl = "img/cloud.mp4";
+
       break;
 
     case "09d":
     case "09n":
-      imgUrl = "img/shower.png";
+      videoUrl = "img/shower.mp4";
+
       break;
 
     case "10d":
     case "10n":
-      imgUrl = "img/rain.png";
+      videoUrl = "img/rain.mp4";
       break;
 
     case "11d":
     case "11n":
-      imgUrl = "img/th.png";
+      videoUrl = "img/th.mp4";
       break;
 
     case "13d":
     case "13n":
-      imgUrl = "img/sn.png";
+      videoUrl = "img/snow.mp4";
       break;
 
     case "50d":
     case "50n":
-      imgUrl = "img/50d.png";
+      videoUrl = "img/fog.mp4";
       break;
 
     default:
-      imgUrl = "img/sun.png";
+      videoUrl = "img/sun.mp4";
       break;
   }
 
-  wrap.style.backgroundImage = `url(${imgUrl})`;
-  wrap.style.backgroundSize = "cover";
-  wrap.style.backgroundPosition = "center";
-  wrap.style.transition = "background 0.5s ease";
+  if (videoSource.src !== videoUrl) {
+    videoSource.src = videoUrl;
+    videoElement.load();
+  }
 }
 /*차트 */
 let chart;
@@ -195,7 +197,7 @@ function drawChart(labels, temps) {
     options: {
       layout: {
         padding: {
-          top: 40,
+          top: 20,
           bottom: 20,
           left: 30,
           right: 30,
@@ -210,7 +212,7 @@ function drawChart(labels, temps) {
           offset: -5,
           color: "#fff",
           font: {
-            size: 14,
+            size: "13vw",
             weight: "bold",
           },
           formatter: (value, ctx) => {
