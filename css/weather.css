@@ -2,10 +2,22 @@
   margin: 0px;
   padding: 0px;
 }
+@font-face {
+  font-family: "Sweet";
+  src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2304-2@1.0/SUITE-Light.woff2")
+    format("woff2");
+  font-weight: 300;
+  font-display: swap;
+}
+
+body {
+  font-family: "Sweet", sans-serif;
+}
 section {
   width: 100%;
   height: 100vh;
 }
+
 .wrap {
   width: 100%;
   height: 100%;
